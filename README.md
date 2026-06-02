@@ -1,41 +1,66 @@
 # Exam #1: "Last Race"
-## Student: s354781 AMBROSINO FRANCESCO 
+## Student: s354781 AMBROSINO FRANCESCO
+
+## How to Run
+
+**First time only** — initialize the database:
+```bash
+cd server
+node init_db.js
+```
+
+**Start the server:**
+```bash
+cd server
+nodemon index.js
+```
+
+**Start the client**:
+```bash
+cd client
+npm run dev
+```
+
+App available at `http://localhost:5173`. Server runs on `http://localhost:3001`.
+
+---
 
 ## React Client Application Routes
 
-- Route `/`: page content and purpose
-- Route `/something/:param`: page content and purpose, param specification
-- ...
 
 ## API Server
 
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- GET `/api/something`
-  - request parameters
-  - response body content
-- POST `/api/something`
-  - request parameters and request body content
-  - response body content
-- ...
+
+## Data Models
+
+- `dao-users.js`
+  - `getUser(username, password)`: verifies credentials (scrypt + `timingSafeEqual`), returns the public user object or false
+  - `getUserById(id)`: re-hydrates the user from the session
+
+- `dao-network.js`
+  - `getStations()`: stations (id, name) — used to label the assigned start/dest (the map itself is a static image)
+  - `getSegments()`: unique adjacent station pairs, without line info
+  - `getInterchangeIds()`: set of stations served by more than one line
+  - `getAdjacency()`: undirected station graph (stationId -> neighbours)
+
+- `dao-games.js`
+  - `createGame(userId, startId, destId)`: inserts an in-progress game (score NULL), returns its id
+  - `getGame(gameId)`: reads a game row
+  - `finishGame(gameId, score)`: stores the final score
+  - `getRanking()`: best score (MAX) per user, descending
+  - `getRandomEvent()`: one random event
 
 ## Database Tables
 
-- Table `stations` - the fixed metro stations. Columns: `id`, `name` (unique).
-- Table `lines` - the metro lines. Columns: `id`, `name` (unique).
-- Table `line_stations` - bridge between `lines` and `stations`, ordered by `position`. Two stations with consecutive `position` on the same line form a *segment*; an *interchange* is a station served by more than one line (derived as `COUNT(DISTINCT lineId) > 1`, not stored). Columns: `lineId`, `stationId`, `position`.
-- Table `events` - the random journey events. Each has a `description` and an integer `effect` in [-4, +4] applied to the player's coins, one event per traversed segment during Execution. Columns: `id`, `description`, `effect`.
-- Table `users` - the registered users (seeded only, no registration). `username` is used for login and shown in the ranking; the password is stored as a scrypt hash with a per-user random `salt`. Columns: `id`, `username` (unique), `name`, `hashedPassword`, `salt`.
-- Table `games` - one row per played game. Stores the player (`userId`) and the server-assigned `startStationId`/`destStationId`. `score` is `NULL` while the game is in progress and `>= 0` once finished (a negative result is stored as 0). The general ranking is `MAX(score)` per user. Columns: `id`, `userId`, `startStationId`, `destStationId`, `score`.
+- Table `stations` - the fixed metro stations: id (PK), name (unique)
+- Table `lines` - the metro lines: id (PK), name (unique)
+- Table `line_stations` - pivot ordering stations along each line: lineId (FK to lines), stationId (FK to stations), position (composite PK lineId+position). Adjacent positions form a segment; interchanges are derived (a station on more than one line)
+- Table `events` - the random journey events: id (PK), description, effect (integer in [-4, +4])
+- Table `users` - the registered users (seeded only, no registration): id (PK), username (unique), name, hashedPassword, salt
+- Table `games` - one game per row: id (PK), userId (FK to users), startStationId (FK to stations), destStationId (FK to stations), score (NULL while in progress, >= 0 once finished, a negative result stored as 0). The ranking is MAX(score) per user
 
 ## Main React Components
 
-- `ListOfSomething` (in `List.js`): component purpose and main functionality
-- `GreatButton` (in `GreatButton.js`): component purpose and main functionality
-- ...
-
-(only _main_ components, minor ones may be skipped)
 
 ## Screenshot
 
