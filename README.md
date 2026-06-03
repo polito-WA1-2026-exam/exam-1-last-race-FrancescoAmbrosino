@@ -3,7 +3,7 @@
 
 ## How to Run
 
-**First time only** — initialize the database:
+**First time only** - initialize the database:
 ```bash
 cd server
 node init_db.js
@@ -38,12 +38,12 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
 ### Game
 
 - `GET /api/segments` (requires login)
-  - Response: array of `{ aId, aName, bId, bName }` — all unique adjacent station pairs, without line info
+  - Response: array of `{ aId, aName, bId, bName }` - all unique adjacent station pairs, without line info
 
 ### Ranking
 
 - `GET /api/ranking` (requires login)
-  - Response: array of `{ username, name, bestScore }` — best score per user, descending
+  - Response: array of `{ username, name, bestScore }` - best score per user, descending
 
 ## Data Models
 
@@ -52,7 +52,7 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
   - `getUserById(id)`: re-hydrates the user from the session
 
 - `dao-network.js`
-  - `getStations()`: stations (id, name) — used to label the assigned start/dest (the map itself is a static image)
+  - `getStations()`: stations (id, name) - used to label the assigned start/dest (the map itself is a static image)
   - `getSegments()`: unique adjacent station pairs, without line info
   - `getInterchangeIds()`: set of stations served by more than one line
   - `getAdjacency()`: undirected station graph (stationId -> neighbours)
