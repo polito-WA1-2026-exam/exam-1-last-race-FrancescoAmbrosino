@@ -30,6 +30,20 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
 
 ## API Server
 
+### Authentication
+
+- `GET /api/sessions/current`
+  - Response: the logged-in user `{ id, username, name }`, or 401 if not authenticated
+
+### Game
+
+- `GET /api/segments` (requires login)
+  - Response: array of `{ aId, aName, bId, bName }` — all unique adjacent station pairs, without line info
+
+### Ranking
+
+- `GET /api/ranking` (requires login)
+  - Response: array of `{ username, name, bestScore }` — best score per user, descending
 
 ## Data Models
 
