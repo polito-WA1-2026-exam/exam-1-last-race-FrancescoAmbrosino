@@ -1,4 +1,5 @@
-import { getAdjacency } from './dao-network.js';
+import { getAdjacency, getInterchangeIds, getLinesPerSegment } from './dao-network.js';
+import { getRandomEvent } from './dao-games.js';
 
 // BFS su grafo non orientato
 const bfsDistances = (adj, start) => {
@@ -24,4 +25,43 @@ export const assignStartDest = async () => {
     if (far.length) return { startId: start, destId: far[Math.floor(Math.random() * far.length)] };
   }
   throw new Error('Network too small for distance >= 3');
+};
+
+const segKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`;
+
+// validazione del percorso
+export const isRouteValid = async (route, startId, destId) => {
+  if (!Array.isArray(route) || route.length < 2) return false;
+  if (route[0] !== startId || route[route.length - 1] !== destId) return false;
+  const adj = await getAdjacency();
+  const interchanges = await getInterchangeIds();
+  const linesOf = await getLinesPerSegment();
+  let prevLines = null; // linee compatibili col tratto percorso finora sulla stessa linea
+  for (let i = 1; i < route.length; i++) {
+    const a = route[i - 1], b = route[i];
+    if (!adj.get(a)?.has(b)) return false; // segmento inesistente
+    const segLines = linesOf.get(segKey(a, b));
+    if (!segLines || segLines.size === 0) return false;
+    if (prevLines === null) { prevLines = new Set(segLines); continue; }
+    const sameLine = [...prevLines].filter(l => segLines.has(l));
+    if (sameLine.length > 0) {
+      prevLines = new Set(sameLine); // resto sulla stessa linea: nessun cambio
+    } else {
+      if (!interchanges.has(a)) return false; // cambio linea fuori da un interscambio
+      prevLines = new Set(segLines);
+    }
+  }
+  return true;
+};
+
+// applica gli effetti
+export const runExecution = async (route) => {
+  let coins = 20; // valore iniziale
+  const steps = [];
+  for (let i = 1; i < route.length; i++) {
+    const event = await getRandomEvent();
+    coins += event.effect;
+    steps.push({ from: route[i - 1], to: route[i], event, coins });
+  }
+  return { steps, finalScore: Math.max(coins, 0) }; // punteggio finale normalizzato a >= 0 con Math.max
 };

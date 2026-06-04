@@ -32,13 +32,27 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
 
 ### Authentication
 
+- `POST /api/sessions`
+  - Body: `{ username, password }`
+  - Response: the logged-in user `{ id, username, name }`, or 401 on invalid credentials
 - `GET /api/sessions/current`
   - Response: the logged-in user `{ id, username, name }`, or 401 if not authenticated
+- `DELETE /api/sessions/current` (requires login)
+  - Response: empty (logout)
 
 ### Game
 
 - `GET /api/segments` (requires login)
   - Response: array of `{ aId, aName, bId, bName }` - all unique adjacent station pairs, without line info
+- `POST /api/games` (requires login)
+  - Starts a new game: the server assigns a random start/dest at distance >= 3
+  - Response: `{ gameId, start: { id, name }, dest: { id, name }, coins: 20 }`
+- `POST /api/games/:gameId/route` (requires login)
+  - Body: `{ route: [stationId, ...] }` (the built sequence, possibly incomplete)
+  - Validates the route server-side, then runs the execution (one random event per segment)
+  - Response (valid): `{ valid: true, steps: [{ from: {id,name}, to: {id,name}, event: {id,description,effect}, coins }], finalScore }`
+  - Response (invalid/incomplete): `{ valid: false, steps: [], finalScore: 0 }`
+  - 404 if the game is not the user's / does not exist, 409 if already finished
 
 ### Ranking
 
@@ -52,7 +66,8 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
   - `getUserById(id)`: re-hydrates the user from the session
 
 - `dao-network.js`
-  - `getStations()`: stations (id, name) - used to label the assigned start/dest (the map itself is a static image)
+  - `getStations()`: stations (id, name) - used server-side to label start/dest and execution steps with names (no public endpoint; the map itself is a static image)
+  - `getLinesPerSegment()`: map "minId-maxId" -> set of lines covering each segment (used by route validation)
   - `getSegments()`: unique adjacent station pairs, without line info
   - `getInterchangeIds()`: set of stations served by more than one line
   - `getAdjacency()`: undirected station graph (stationId -> neighbours)

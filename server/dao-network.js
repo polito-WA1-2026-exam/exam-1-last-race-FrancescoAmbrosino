@@ -56,3 +56,19 @@ export const getAdjacency = async () => {
   }
   return adj;
 };
+
+// linee che coprono ciascun segmento
+export const getLinesPerSegment = async () => {
+  const rows = await db.all(Q_LINE_STATIONS);
+  const map = new Map();
+  for (let i = 1; i < rows.length; i++) {
+    const prev = rows[i - 1], cur = rows[i];
+    if (prev.lineId !== cur.lineId) continue;
+    const a = Math.min(prev.stationId, cur.stationId);
+    const b = Math.max(prev.stationId, cur.stationId);
+    const key = `${a}-${b}`;
+    if (!map.has(key)) map.set(key, new Set());
+    map.get(key).add(cur.lineId);
+  }
+  return map;
+};
