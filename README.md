@@ -115,7 +115,13 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
 
 ## Screenshot
 
-![Screenshot](./img/screenshot.jpg)
+General ranking page:
+
+![Ranking page](./img/ranking.png)
+
+During a game:
+
+![During a game](./img/gameplay.png)
 
 ## Users Credentials
 
@@ -124,5 +130,4 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
 - `carol`, `carol123` (registered, has not played yet)
 
 ## Use of AI Tools
-Briefly describe whether you used any AI tools (e.g., ChatGPT, GitHub Copilot, Claude) while working on this project, for which purposes (e.g., clarifying concepts, debugging, generating code), and how you verified or adapted their output.
-If you did not use any AI tools, simply state so.
+I used an AI coding assistant (Claude Code by Antropic) as a support tool to: clarify the track requirements, discuss design trade-offs, speed up some boilerplate, and review my code step by step. I am able to explain and justify every line of the project.
