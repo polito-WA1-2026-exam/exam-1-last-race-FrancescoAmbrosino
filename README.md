@@ -90,6 +90,18 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
 
 ## Main React Components
 
+- `GamePage`
+  - The game as a state machine: Setup, Planning, Execution, Result
+  - Starts a game (`POST /api/games`), submits the route and shows the final score
+- `PlanningView`
+  - Builds the route by selecting adjacent segments in sequence from the assigned start
+  - Hosts the 90s countdown and auto-submits on expiry
+- `ExecutionView`
+  - Reveals the journey steps one at a time, with the random event and the running coin total
+- `RankingTable`
+  - General ranking: best score per user
+- `LoginForm`
+  - Username/password form, shows the error on invalid credentials
 
 ## Screenshot
 
