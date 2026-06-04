@@ -27,6 +27,16 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
 
 ## React Client Application Routes
 
+- Route `/`: home page
+  - Anonymous user: shows only the game instructions (no map)
+  - Logged-in user: instructions plus the "New game" and "Ranking" buttons
+- Route `/login`: login page
+  - Shows `LoginForm`; redirects to `/` if the user is already logged in
+- Route `/play`: the game, as a state machine (Setup, Planning, Execution, Result)
+  - Requires login (redirects to `/login` if not authenticated)
+- Route `/ranking`: the general ranking page
+  - Requires login (redirects to `/login` if not authenticated)
+- Route `*`: catch-all for unknown URLs, shows a "Page not found" message
 
 ## API Server
 
