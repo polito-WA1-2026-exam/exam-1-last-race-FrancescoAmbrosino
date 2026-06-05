@@ -57,7 +57,7 @@ function GamePage() {
     return (
       <div>
         <h2>Setup</h2>
-        <p>Full network map (stations, connections and lines). Study it, then start planning.</p>
+        <p>Study it, then start planning.</p>
         <img src="/setup-map.png" alt="Full network map (with lines)"
           style={{ maxWidth: '100%', maxHeight: '45vh', border: '1px solid #ccc' }} />
         <div className="mt-3"><Button onClick={() => setPhase('planning')}>I am ready</Button></div>

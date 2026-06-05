@@ -15,7 +15,7 @@ function RankingTable() {
 
   return (
     <div>
-      <h2>General ranking</h2>
+      <h2>Ranking</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       <Table striped bordered>
         <thead>
