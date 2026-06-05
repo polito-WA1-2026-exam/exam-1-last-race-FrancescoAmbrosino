@@ -62,7 +62,7 @@ await db.exec(`
 
 // 2) DATI DELLA RETE
 const network = {
-  'Red Line': ['Centrale', 'Porta Velaria', 'Crocevia del Falco', 'Piazza delle Lanterne', 'Giardini Pensili'],
+  'Red Line': ['Centrale', 'Porta Velaria', 'Crocevia del Falco', 'Piazza delle Lanterne', 'Giardini Pensili', 'Belvedere'],
   'Blue Line': ['Arco Trionfale', 'Centrale', 'Fontana Oscura', 'Borgo Sereno', 'Viale dei Mosaici'],
   'Green Line': ['Porta Velaria', 'Fontana Oscura', 'Torre Cinerea', "Campo dell'Eco", 'Molo Antico'],
   'Yellow Line': ['Ponte delle Vele', 'Piazza delle Lanterne', 'Torre Cinerea', 'Viale dei Mosaici', "Campo dell'Eco"],
