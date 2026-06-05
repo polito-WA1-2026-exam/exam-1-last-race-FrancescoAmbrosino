@@ -123,6 +123,10 @@ During a game:
 
 ![During a game](./img/gameplay.png)
 
+During an execution:
+
+![During an execution](./img/execution.png)
+
 ## Users Credentials
 
 - `alice`, `alice123` (has already played games - appears in the ranking)
