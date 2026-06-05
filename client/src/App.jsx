@@ -44,7 +44,7 @@ function App() {
           <Route path="/login" element={user ? <Navigate to="/" /> : <LoginForm onLogin={handleLogin} />} />
           <Route path="/play" element={user ? <GamePage /> : <Navigate to="/login" />} />
           <Route path="/ranking" element={user ? <RankingTable /> : <Navigate to="/login" />} />
-          <Route path="*" element={<p>Page not found.</p>} />
+          <Route path="*" element={<p>Page not found. 🤷</p>} />
         </Routes>
       </Container>
     </>
@@ -58,8 +58,8 @@ function Home({ user }) {
       <Instructions />
       {user && (
         <div className="d-flex gap-2 mt-3">
-          <Link to="/play" className="btn btn-primary">New game</Link>
-          <Link to="/ranking" className="btn btn-outline-secondary">Ranking</Link>
+          <Link to="/play" className="btn btn-primary">New game 🚇</Link>
+          <Link to="/ranking" className="btn btn-outline-secondary">Ranking 🏆</Link>
         </div>
       )}
     </>

@@ -15,7 +15,7 @@ function RankingTable() {
 
   return (
     <div>
-      <h2>Ranking</h2>
+      <h2>Ranking 🏆</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       <Table striped bordered>
         <thead>
@@ -32,7 +32,7 @@ function RankingTable() {
           ))}
         </tbody>
       </Table>
-      {rows.length === 0 && !error && <p>No games played yet.</p>}
+      {rows.length === 0 && !error && <p>No games played yet. Be the first! 🚀</p>}
     </div>
   );
 }

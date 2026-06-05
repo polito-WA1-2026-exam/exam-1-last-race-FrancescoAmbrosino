@@ -19,7 +19,7 @@ function LoginForm({ onLogin }) {
 
   return (
     <Form onSubmit={handleSubmit} style={{ maxWidth: 360 }}>
-      <h2>Login</h2>
+      <h2>Welcome back! 👋</h2>
       {error && <Alert variant="danger">{error}</Alert>}
       <Form.Group className="mb-3">
         <Form.Label htmlFor="username">Username</Form.Label>

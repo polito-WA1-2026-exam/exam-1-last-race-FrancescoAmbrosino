@@ -56,11 +56,11 @@ function GamePage() {
   if (phase === 'setup') {
     return (
       <div>
-        <h2>Setup</h2>
-        <p>Study it, then start planning.</p>
+        <h2>Setup 🗺️</h2>
+        <p>Study it, then start planning!</p>
         <img src="/setup-map.png" alt="Full network map (with lines)"
           style={{ maxWidth: '100%', maxHeight: '45vh', border: '1px solid #ccc' }} />
-        <div className="mt-3"><Button onClick={() => setPhase('planning')}>I am ready</Button></div>
+        <div className="mt-3"><Button onClick={() => setPhase('planning')}>I am ready!</Button></div>
       </div>
     );
   }
@@ -76,12 +76,12 @@ function GamePage() {
   // result
   return (
     <div>
-      <h2>Result</h2>
+      <h2>Result 🏁</h2>
       {result.valid
-        ? <Alert variant="info">Final score: <b>{result.finalScore}</b> coins.</Alert>
-        : <Alert variant="warning">Invalid or incomplete route: you lost all coins. Score: <b>0</b>.</Alert>}
+        ? <Alert variant="info">Final score: <b>{result.finalScore}</b> coins. Nice ride!</Alert>
+        : <Alert variant="warning">Ouch! Invalid or incomplete route: you lost all coins. Score: <b>0</b>.</Alert>}
       <div className="d-flex gap-2">
-        <Button onClick={startGame}>New game</Button>
+        <Button onClick={startGame}>New game 🚇</Button>
         <Link to="/ranking" className="btn btn-outline-secondary">Ranking</Link>
       </div>
     </div>

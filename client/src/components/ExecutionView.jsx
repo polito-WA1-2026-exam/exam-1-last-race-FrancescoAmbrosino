@@ -16,16 +16,16 @@ function ExecutionView({ steps, onDone }) {
 
   return (
     <div>
-      <h2>Execution</h2>
+      <h2>Execution 🚇</h2>
       <ListGroup className="mb-3">
         {shown.map((s, i) => (
           <ListGroup.Item key={i}>
-            {s.from.name} {'→'} {s.to.name}: {s.event.description}{' '}
-            ({s.event.effect >= 0 ? '+' : ''}{s.event.effect}) | coins: {s.coins}
+            {s.from.name} {'→'} {s.to.name}:{' '}
+            <b>{s.event.description} ({s.event.effect >= 0 ? '+' : ''}{s.event.effect})</b> | coins: {s.coins}
           </ListGroup.Item>
         ))}
       </ListGroup>
-      {done && <Button onClick={onDone}>See result</Button>}
+      {done && <Button onClick={onDone}>See result 🏁</Button>}
     </div>
   );
 }

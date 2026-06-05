@@ -5,7 +5,7 @@ function NavHeader({ user, onLogout }) {
   return (
     <Navbar bg="dark" variant="dark">
       <Container>
-        <Navbar.Brand as={Link} to="/">Last Race</Navbar.Brand>
+        <Navbar.Brand as={Link} to="/">🏁 Last Race</Navbar.Brand>
         <Nav className="ms-auto align-items-center gap-2">
           <Nav.Link as={Link} to="/">Home</Nav.Link>
           {user ? (

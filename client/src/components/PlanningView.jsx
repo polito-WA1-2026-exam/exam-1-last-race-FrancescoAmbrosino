@@ -43,7 +43,7 @@ function PlanningView({ game, segments, onSubmit }) {
 
       {/* destra: titolo, timer, start/dest, lista completa, bottoni */}
       <Col md={6}>
-        <h2>Planning</h2>
+        <h2>Planning 🧭</h2>
         <CountdownTimer seconds={90} onExpire={doSubmit} />
         <p className="mt-2"><b>Start:</b> {game.start.name} &nbsp;&nbsp; <b>Destination:</b> {game.dest.name}</p>
 

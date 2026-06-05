@@ -18,13 +18,13 @@ function Instructions() {
         </li>
         <li><b>Execution</b>: the app checks your route:
           <ul>
-            <li>{'→'} if correct: for each segment a random event adds or removes coins (between -4 and +4 per event);</li>
-            <li>{'→'} if wrong: an invalid or incomplete route scores 0.</li>
+            <li>{'→'} if correct: good luck! For each segment a random event adds or removes coins (between -4 and +4 per event);</li>
+            <li>{'→'} if wrong: ouch! An invalid or incomplete route scores 0 coins.</li>
           </ul>
         </li>
         <li><b>Result</b>: each game starts with 20 coins; your score is the remaining coins (never below 0).</li>
       </ol>
-      <p>Log in to play and to see the ranking.</p>
+      <p>Log in, hop on, and climb the ranking! 🏆</p>
     </div>
   );
 }
