@@ -59,7 +59,7 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
   - Response: `{ gameId, start: { id, name }, dest: { id, name }, coins: 20 }`
 - `POST /api/games/:gameId/route` (requires login)
   - Body: `{ route: [stationId, ...] }` (the built sequence, possibly incomplete)
-  - Validates the route server-side, then runs the execution (one random event per segment)
+  - Validates the route server-side (valid start/dest, adjacent segments, line changes only at interchanges, each segment used at most once), then runs the execution (one random event per segment)
   - Response (valid): `{ valid: true, steps: [{ from: {id,name}, to: {id,name}, event: {id,description,effect}, coins }], finalScore }`
   - Response (invalid/incomplete): `{ valid: false, steps: [], finalScore: 0 }`
   - 404 if the game is not the user's / does not exist, 409 if already finished

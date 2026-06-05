@@ -7,7 +7,7 @@ async function handleResponse(res) {
     return text.length ? JSON.parse(text) : {};  // alcune risposte (logout) sono vuote
   }
   // provo a leggere il messaggio di errore dal body, altrimenti ne uso uno generico
-  const err = await res.json().catch(() => ({ error: 'Server error' }));
+  const err = await res.json().catch(() => ({ error: 'Something went wrong' }));
   throw err;
 }
 

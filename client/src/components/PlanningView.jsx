@@ -2,6 +2,9 @@ import { useMemo, useRef, useState } from 'react';
 import { Button, ListGroup, Alert } from 'react-bootstrap';
 import CountdownTimer from './CountdownTimer.jsx';
 
+// chiave non orientata di un segmento (A-B == B-A)
+const segKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`;
+
 // seleziono segmenti in sequenza partendo dalla stazione di start
 function PlanningView({ game, segments, onSubmit }) {
   const [route, setRoute] = useState([game.start.id]); // sequenza di stationId
@@ -15,12 +18,20 @@ function PlanningView({ game, segments, onSubmit }) {
   }, [segments, game]);
   const last = route[route.length - 1];
 
-  // segmenti selezionabili: quelli con un estremo uguale all'ultima stazione raggiunta.
+  // segmenti già percorsi: ognuno usabile una sola volta
+  const usedSegs = useMemo(() => {
+    const s = new Set();
+    for (let i = 1; i < route.length; i++) s.add(segKey(route[i - 1], route[i]));
+    return s;
+  }, [route]);
+
+  // segmenti selezionabili: estremo uguale all'ultima stazione e non già usato
   const options = segments
     .map((s) => (s.aId === last ? { id: s.bId, name: s.bName }
       : s.bId === last ? { id: s.aId, name: s.aName }
         : null))
-    .filter(Boolean);
+    .filter(Boolean)
+    .filter((o) => !usedSegs.has(segKey(last, o.id)));
 
   const addStop = (id) => setRoute((r) => [...r, id]);
   const undo = () => setRoute((r) => (r.length > 1 ? r.slice(0, -1) : r));

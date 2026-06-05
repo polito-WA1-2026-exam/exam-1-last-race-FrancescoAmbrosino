@@ -36,10 +36,14 @@ export const isRouteValid = async (route, startId, destId) => {
   const adj = await getAdjacency();
   const interchanges = await getInterchangeIds();
   const linesOf = await getLinesPerSegment();
+  const usedSegs = new Set(); // ogni segmento usabile una sola volta
   let prevLines = null; // linee compatibili col tratto percorso finora sulla stessa linea
   for (let i = 1; i < route.length; i++) {
     const a = route[i - 1], b = route[i];
     if (!adj.get(a)?.has(b)) return false; // segmento inesistente
+    const k = segKey(a, b);
+    if (usedSegs.has(k)) return false; // segmento riutilizzato
+    usedSegs.add(k);
     const segLines = linesOf.get(segKey(a, b));
     if (!segLines || segLines.size === 0) return false;
     if (prevLines === null) { prevLines = new Set(segLines); continue; }
