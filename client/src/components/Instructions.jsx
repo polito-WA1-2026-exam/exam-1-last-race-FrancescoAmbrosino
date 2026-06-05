@@ -10,7 +10,7 @@ function Instructions() {
           <ul>
             <li>start and destination are random, at least 3 segments apart;</li>
             <li>you have 90 seconds (on expiry the route is auto-submitted as-is);</li>
-            <li>select adjacent segments in sequence;</li>
+            <li>pick segments from the full list, in the right sequence (the app validates them in order);</li>
             <li>each segment can be used only once;</li>
             <li>line changes are allowed only at interchange stations;</li>
             <li>the route must start and end at the assigned stations.</li>

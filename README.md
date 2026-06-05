@@ -58,8 +58,8 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
   - Starts a new game: the server assigns a random start/dest at distance >= 3
   - Response: `{ gameId, start: { id, name }, dest: { id, name }, coins: 20 }`
 - `POST /api/games/:gameId/route` (requires login)
-  - Body: `{ route: [stationId, ...] }` (the built sequence, possibly incomplete)
-  - Validates the route server-side (valid start/dest, adjacent segments, line changes only at interchanges, each segment used at most once), then runs the execution (one random event per segment)
+  - Body: `{ segments: [[aId, bId], ...] }` (the chosen segments, in order, possibly incomplete)
+  - Reconstructs the path from the chosen segments and validates it server-side, in order (valid start/dest, adjacent segments, line changes only at interchanges, each segment used at most once), then runs the execution (one random event per segment)
   - Response (valid): `{ valid: true, steps: [{ from: {id,name}, to: {id,name}, event: {id,description,effect}, coins }], finalScore }`
   - Response (invalid/incomplete): `{ valid: false, steps: [], finalScore: 0 }`
   - 404 if the game is not the user's / does not exist, 409 if already finished
@@ -104,7 +104,7 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
   - The game as a state machine: Setup, Planning, Execution, Result
   - Starts a game (`POST /api/games`), submits the route and shows the final score
 - `PlanningView`
-  - Builds the route by selecting adjacent segments in sequence from the assigned start
+  - Shows the full list of all segments; the player picks segments in sequence (the server reconstructs and validates them in order)
   - Hosts the 90s countdown and auto-submits on expiry
 - `ExecutionView`
   - Reveals the journey steps one at a time, with the random event and the running coin total

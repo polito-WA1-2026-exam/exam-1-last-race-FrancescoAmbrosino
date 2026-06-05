@@ -1,71 +1,84 @@
 import { useMemo, useRef, useState } from 'react';
-import { Button, ListGroup, Alert } from 'react-bootstrap';
+import { Button, ListGroup, Alert, Badge, Row, Col } from 'react-bootstrap';
 import CountdownTimer from './CountdownTimer.jsx';
 
 // chiave non orientata di un segmento (A-B == B-A)
 const segKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`;
 
-// seleziono segmenti in sequenza partendo dalla stazione di start
+// il giocatore costruisce il percorso scegliendo i segmenti dalla lista completa, in sequenza.
+// la validazione vera (in ordine) è lato server: qui solo selezione e un hint NON autoritativo.
 function PlanningView({ game, segments, onSubmit }) {
-  const [route, setRoute] = useState([game.start.id]); // sequenza di stationId
-  const submittedRef = useRef(false); // evita doppio invio (timer + bottone)
+  const [chosen, setChosen] = useState([]); // segmenti scelti in ordine: [{ aId, aName, bId, bName }]
+  const submittedRef = useRef(false);        // evita doppio invio (timer + bottone)
 
-  // mappa id -> name
-  const nameOf = useMemo(() => {
-    const m = new Map([[game.start.id, game.start.name], [game.dest.id, game.dest.name]]);
-    for (const s of segments) { m.set(s.aId, s.aName); m.set(s.bId, s.bName); }
-    return m;
-  }, [segments, game]);
-  const last = route[route.length - 1];
+  // ogni segmento usabile una sola volta: chiavi già scelte
+  const usedKeys = useMemo(() => new Set(chosen.map((s) => segKey(s.aId, s.bId))), [chosen]);
 
-  // segmenti già percorsi: ognuno usabile una sola volta
-  const usedSegs = useMemo(() => {
-    const s = new Set();
-    for (let i = 1; i < route.length; i++) s.add(segKey(route[i - 1], route[i]));
-    return s;
-  }, [route]);
+  // hint NON autoritativo: i segmenti scelti si concatenano da start a dest?
+  const reachesDest = useMemo(() => {
+    let cur = game.start.id;
+    for (const s of chosen) {
+      if (s.aId !== cur && s.bId !== cur) return false; // catena interrotta
+      cur = s.aId === cur ? s.bId : s.aId;
+    }
+    return chosen.length > 0 && cur === game.dest.id;
+  }, [chosen, game]);
 
-  // segmenti selezionabili: estremo uguale all'ultima stazione e non già usato
-  const options = segments
-    .map((s) => (s.aId === last ? { id: s.bId, name: s.bName }
-      : s.bId === last ? { id: s.aId, name: s.aName }
-        : null))
-    .filter(Boolean)
-    .filter((o) => !usedSegs.has(segKey(last, o.id)));
-
-  const addStop = (id) => setRoute((r) => [...r, id]);
-  const undo = () => setRoute((r) => (r.length > 1 ? r.slice(0, -1) : r));
+  const addSeg = (s) => setChosen((c) => [...c, s]);
+  const undo = () => setChosen((c) => c.slice(0, -1));
+  const clear = () => setChosen([]);
 
   const doSubmit = () => {
     if (submittedRef.current) return; // una sola volta
     submittedRef.current = true;
-    onSubmit(route);
+    onSubmit(chosen.map((s) => [s.aId, s.bId])); // invio i segmenti scelti in ordine
   };
 
   return (
-    <div>
-      <h2>Planning</h2>
-      <CountdownTimer seconds={90} onExpire={doSubmit} />
-      <p className="mt-2"><b>Start:</b> {game.start.name} &nbsp;&nbsp; <b>Destination:</b> {game.dest.name}</p>
+    <Row>
+      {/* sinistra: mappa + segmenti scelti */}
+      <Col md={6}>
+        <img src="/planning-map.png" alt="Network map: stations only, without lines"
+          style={{ maxWidth: '100%', border: '1px solid #ccc' }} className="mb-3" />
 
-      <p><b>Your route:</b> {route.map((id) => nameOf.get(id)).join(' → ')}</p>
-      {last === game.dest.id && <Alert variant="success" className="py-1">Destination reached: you can submit.</Alert>}
+        {/* segmenti scelti, in ordine */}
+        <p className="mb-1"><b>Your chosen segments</b> (validated in order when you submit):</p>
+        <ListGroup className="mb-2">
+          {chosen.map((s, i) => (
+            <ListGroup.Item key={i}>{i + 1}. {s.aName} {'↔'} {s.bName}</ListGroup.Item>
+          ))}
+          {chosen.length === 0 && <ListGroup.Item disabled>No segments selected yet.</ListGroup.Item>}
+        </ListGroup>
+        {reachesDest &&
+          <Alert variant="success" className="py-1">Your segments currently reach the destination: you can submit.</Alert>}
+      </Col>
 
-      <p className="mb-1"><b>Next segment</b> (from {nameOf.get(last)}):</p>
-      <ListGroup className="mb-3">
-        {options.map((o) => (
-          <ListGroup.Item action key={o.id} onClick={() => addStop(o.id)}>
-            {nameOf.get(last)} {'→'} {o.name}
-          </ListGroup.Item>
-        ))}
-        {options.length === 0 && <ListGroup.Item disabled>No segments from here.</ListGroup.Item>}
-      </ListGroup>
+      {/* destra: titolo, timer, start/dest, lista completa, bottoni */}
+      <Col md={6}>
+        <h2>Planning</h2>
+        <CountdownTimer seconds={90} onExpire={doSubmit} />
+        <p className="mt-2"><b>Start:</b> {game.start.name} &nbsp;&nbsp; <b>Destination:</b> {game.dest.name}</p>
 
-      <div className="d-flex gap-2">
-        <Button variant="secondary" onClick={undo} disabled={route.length <= 1}>Undo last</Button>
-        <Button variant="primary" onClick={doSubmit}>Submit route</Button>
-      </div>
-    </div>
+        <p className="mb-1"><b>All segments</b> &ndash; pick them in the right sequence:</p>
+        <ListGroup className="mb-3" style={{ maxHeight: '65vh', overflowY: 'auto' }}>
+          {segments.map((s) => {
+            const used = usedKeys.has(segKey(s.aId, s.bId));
+            return (
+              <ListGroup.Item action={!used} key={`${s.aId}-${s.bId}`} disabled={used}
+                onClick={() => addSeg(s)}>
+                {s.aName} {'↔'} {s.bName} {used && <Badge bg="secondary">chosen</Badge>}
+              </ListGroup.Item>
+            );
+          })}
+        </ListGroup>
+
+        <div className="d-flex gap-2">
+          <Button variant="secondary" onClick={undo} disabled={chosen.length === 0}>Undo last</Button>
+          <Button variant="outline-secondary" onClick={clear} disabled={chosen.length === 0}>Clear</Button>
+          <Button variant="primary" onClick={doSubmit}>Submit route</Button>
+        </div>
+      </Col>
+    </Row>
   );
 }
 

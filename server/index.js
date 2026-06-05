@@ -11,7 +11,7 @@ import { body, param, validationResult } from 'express-validator';
 import { getUser, getUserById } from './dao-users.js';
 import { getSegments, getStations } from './dao-network.js';
 import { getRanking, createGame, getGame, finishGame } from './dao-games.js';
-import { assignStartDest, isRouteValid, runExecution } from './game-logic.js';
+import { assignStartDest, buildRoute, isRouteValid, runExecution } from './game-logic.js';
 
 passport.use(new LocalStrategy({ usernameField: 'username' }, async (username, password, done) => {
   const user = await getUser(username, password); // false se credenziali errate
@@ -104,20 +104,24 @@ app.post('/api/games', isLoggedIn, async (req, res) => {
   }
 });
 
-// invio percorso
+// invio percorso (lista di segmenti scelti, in ordine)
 app.post('/api/games/:gameId/route', isLoggedIn,
-  [param('gameId').isInt(), body('route').isArray(), body('route.*').isInt()],
+  [param('gameId').isInt(), body('segments').isArray(), body('segments.*').isArray(), body('segments.*.*').isInt()],
   async (req, res) => {
     try {
       const errors = validationResult(req);
       if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
 
+      const segments = req.body.segments.map(s => s.map(Number));
+      if (segments.some(s => s.length !== 2)) return res.status(400).json({ error: 'Each segment must be a pair of station ids' });
+
       const game = await getGame(req.params.gameId);
       if (!game || game.userId !== req.user.id) return res.status(404).json({ error: 'Game not found' });
       if (game.score !== null) return res.status(409).json({ error: 'Game already finished' });
 
-      const route = req.body.route.map(Number);
-      const valid = await isRouteValid(route, game.startStationId, game.destStationId);
+      // ricostruisco il percorso dai segmenti scelti e lo valido (in ordine) lato server
+      const route = buildRoute(segments, game.startStationId);
+      const valid = route !== null && await isRouteValid(route, game.startStationId, game.destStationId);
       if (!valid) {
         await finishGame(game.id, 0); // percorso invalido/incompleto -> 0
         return res.json({ valid: false, steps: [], finalScore: 0 });

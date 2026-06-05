@@ -37,10 +37,10 @@ function GamePage() {
     startGame();
   }, [startGame]);
 
-  const handleSubmit = async (route) => {
+  const handleSubmit = async (segments) => {
     setPhase('loading');
     try {
-      const res = await API.submitRoute(game.gameId, route);
+      const res = await API.submitRoute(game.gameId, segments);
       setResult(res);
       // valido -> Execution; invalido/incompleto -> dritto al risultato (score 0)
       setPhase(res.valid && res.steps.length > 0 ? 'execution' : 'result');
@@ -66,13 +66,7 @@ function GamePage() {
   }
 
   if (phase === 'planning') {
-    return (
-      <div>
-        <img src="/planning-map.png" alt="Network map: stations only, without lines"
-          style={{ maxWidth: '100%', maxHeight: '45vh', border: '1px solid #ccc' }} className="mb-3" />
-        <PlanningView game={game} segments={segments} onSubmit={handleSubmit} />
-      </div>
-    );
+    return <PlanningView game={game} segments={segments} onSubmit={handleSubmit} />;
   }
 
   if (phase === 'execution') {

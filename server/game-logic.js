@@ -29,6 +29,20 @@ export const assignStartDest = async () => {
 
 const segKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`;
 
+// ricostruisce la sequenza di stazioni dai segmenti scelti in ordine.
+// la direzione di ogni segmento è dedotta dal concatenamento; null se la catena si rompe.
+export const buildRoute = (segments, startId) => {
+  const route = [startId];
+  let cur = startId;
+  for (const seg of segments) {
+    const [a, b] = seg;
+    if (a !== cur && b !== cur) return null; // segmento non collegato all'ultima stazione
+    cur = a === cur ? b : a;
+    route.push(cur);
+  }
+  return route;
+};
+
 // validazione del percorso
 export const isRouteValid = async (route, startId, destId) => {
   if (!Array.isArray(route) || route.length < 2) return false;

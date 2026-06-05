@@ -34,10 +34,10 @@ export const getRanking = () =>
 export const newGame = () =>
   fetch(`${SERVER_URL}/games`, { method: 'POST', credentials: 'include' }).then(handleResponse);
 
-export const submitRoute = (gameId, route) =>
+export const submitRoute = (gameId, segments) =>
   fetch(`${SERVER_URL}/games/${gameId}/route`, {
     method: 'POST',
     credentials: 'include',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ route }),
+    body: JSON.stringify({ segments }),
   }).then(handleResponse);
