@@ -115,7 +115,7 @@ App available at `http://localhost:5173`. Server runs on `http://localhost:3001`
 
 ## Screenshot
 
-General ranking page:
+Ranking page:
 
 ![Ranking page](./img/ranking.png)
 
