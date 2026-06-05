@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Button, ListGroup, Alert, Badge, Row, Col } from 'react-bootstrap';
+import { Button, ListGroup, Alert, Row, Col } from 'react-bootstrap';
 import CountdownTimer from './CountdownTimer.jsx';
 
 // chiave non orientata di un segmento (A-B == B-A)
@@ -42,7 +42,7 @@ function PlanningView({ game, segments, onSubmit }) {
           style={{ maxWidth: '100%', border: '1px solid #ccc' }} className="mb-3" />
 
         {/* segmenti scelti, in ordine */}
-        <p className="mb-1"><b>Your chosen segments</b> (validated in order when you submit):</p>
+        <p className="mb-1"><b>Your chosen segments</b></p>
         <ListGroup className="mb-2">
           {chosen.map((s, i) => (
             <ListGroup.Item key={i}>{i + 1}. {s.aName} {'↔'} {s.bName}</ListGroup.Item>
@@ -59,17 +59,15 @@ function PlanningView({ game, segments, onSubmit }) {
         <CountdownTimer seconds={90} onExpire={doSubmit} />
         <p className="mt-2"><b>Start:</b> {game.start.name} &nbsp;&nbsp; <b>Destination:</b> {game.dest.name}</p>
 
-        <p className="mb-1"><b>All segments</b> &ndash; pick them in the right sequence:</p>
+        <p className="mb-1"><b>All segments</b></p>
         <ListGroup className="mb-3" style={{ maxHeight: '65vh', overflowY: 'auto' }}>
-          {segments.map((s) => {
-            const used = usedKeys.has(segKey(s.aId, s.bId));
-            return (
-              <ListGroup.Item action={!used} key={`${s.aId}-${s.bId}`} disabled={used}
-                onClick={() => addSeg(s)}>
-                {s.aName} {'↔'} {s.bName} {used && <Badge bg="secondary">chosen</Badge>}
+          {segments
+            .filter((s) => !usedKeys.has(segKey(s.aId, s.bId)))
+            .map((s) => (
+              <ListGroup.Item action key={`${s.aId}-${s.bId}`} onClick={() => addSeg(s)}>
+                {s.aName} {'↔'} {s.bName}
               </ListGroup.Item>
-            );
-          })}
+            ))}
         </ListGroup>
 
         <div className="d-flex gap-2">
