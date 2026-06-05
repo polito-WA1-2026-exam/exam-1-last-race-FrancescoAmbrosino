@@ -134,4 +134,4 @@ During an execution:
 - `carol`, `carol123` (registered, has not played yet)
 
 ## Use of AI Tools
-I used an AI coding assistant (Claude Code by Antropic) as a support tool to: clarify the track requirements, discuss design trade-offs, speed up some boilerplate, and review my code step by step. I am able to explain and justify every line of the project.
+I used an AI coding assistant (Claude Code by Anthropic) as a support tool to: clarify the track requirements, discuss design trade-offs, speed up some boilerplate, and review my code step by step. I am able to explain and justify every line of the project.
