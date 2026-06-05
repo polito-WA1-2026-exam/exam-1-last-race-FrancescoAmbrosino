@@ -5,13 +5,13 @@ function Instructions() {
       <h2>How to play 🚇</h2>
       <p>Last Race is a single-player game on a fixed metro network. Plan smart, ride fast, grab the coins!</p>
       <ol>
-        <li><b>Setup</b>: look at the full network map (stations, connections, lines).</li>
+        <li><b>Setup</b>: look at the full network map (stations, segments, lines).</li>
         <li><b>Planning</b>: build a route from the assigned start to the destination. Rules:
           <ul>
-            <li>start and destination are random, at least 3 segments apart;</li>
-            <li>you have 90 seconds ⏱️ (on expiry the route is auto-submitted as-is);</li>
-            <li>pick segments from the full list, in the right sequence (the app validates them in order);</li>
-            <li>each segment can be used only once;</li>
+            <li>start and destination are random;</li>
+            <li>you have 90 seconds ⏱️;</li>
+            <li>select the correct segments in the right order from the list;</li>
+            <li>each segment is bidirectional and can be selected only once;</li>
             <li>line changes are allowed only at interchange stations;</li>
             <li>the route must start and end at the assigned stations.</li>
           </ul>
