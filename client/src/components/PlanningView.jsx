@@ -1,5 +1,5 @@
 import { useMemo, useRef, useState } from 'react';
-import { Button, ListGroup, Alert, Row, Col } from 'react-bootstrap';
+import { Button, ListGroup, Row, Col } from 'react-bootstrap';
 import CountdownTimer from './CountdownTimer.jsx';
 
 // chiave non orientata di un segmento (A-B == B-A)
@@ -13,16 +13,6 @@ function PlanningView({ game, segments, onSubmit }) {
 
   // ogni segmento usabile una sola volta: chiavi già scelte
   const usedKeys = useMemo(() => new Set(chosen.map((s) => segKey(s.aId, s.bId))), [chosen]);
-
-  // hint NON autoritativo: i segmenti scelti si concatenano da start a dest?
-  const reachesDest = useMemo(() => {
-    let cur = game.start.id;
-    for (const s of chosen) {
-      if (s.aId !== cur && s.bId !== cur) return false; // catena interrotta
-      cur = s.aId === cur ? s.bId : s.aId;
-    }
-    return chosen.length > 0 && cur === game.dest.id;
-  }, [chosen, game]);
 
   const addSeg = (s) => setChosen((c) => [...c, s]);
   const undo = () => setChosen((c) => c.slice(0, -1));
@@ -49,8 +39,6 @@ function PlanningView({ game, segments, onSubmit }) {
           ))}
           {chosen.length === 0 && <ListGroup.Item disabled>No segments selected yet.</ListGroup.Item>}
         </ListGroup>
-        {reachesDest &&
-          <Alert variant="success" className="py-1">Your segments currently reach the destination: you can submit.</Alert>}
       </Col>
 
       {/* destra: titolo, timer, start/dest, lista completa, bottoni */}
