@@ -14,22 +14,22 @@ import { assignStartDest, buildRoute, isRouteValid, runExecution } from './game-
 
 passport.use(new LocalStrategy({ usernameField: 'username' }, async (username, password, done) => {
   const user = await getUser(username, password); // false se credenziali errate
-  if (!user) return done(null, false, { message: 'Invalid credentials.' });
+  if (!user) return done(null, false, { message: 'Invalid credentials' });
   return done(null, user);
 }));
 
 passport.serializeUser((user, done) => done(null, user.id));
 passport.deserializeUser(async (id, done) => {
   const user = await getUserById(id);
-  return user ? done(null, user) : done(null, false);
+  return user ? done(null, user) : done(null, false); // ritorna false se l'utente non esiste più
 });
 
 // init express
 const app = new express();
 const port = 3001;
 
-app.use(morgan('dev'));
-app.use(express.json());
+app.use(morgan('dev')); // logging
+app.use(express.json()); // parsing del body
 app.use(cors({
   origin: 'http://localhost:5173',
   credentials: true,
@@ -37,7 +37,7 @@ app.use(cors({
 app.use(session({
   secret: 'last-race-dev-secret',
   resave: false,
-  saveUninitialized: false,
+  saveUninitialized: false, // evita di creare sessioni per visitatori anonimi
 }));
 app.use(passport.initialize());
 app.use(passport.session());
@@ -78,10 +78,10 @@ app.post('/api/sessions',
   [body('username').notEmpty(), body('password').notEmpty()],
   (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() }); // valida login
     passport.authenticate('local', (err, user, info) => {
       if (err) return next(err);
-      if (!user) return res.status(401).json({ error: info?.message || 'Invalid credentials' });
+      if (!user) return res.status(401).json({ error: info?.message || 'Invalid credentials' }); // valida credenziali
       req.login(user, (err) => err ? next(err) : res.json(req.user));
     })(req, res, next);
   });
@@ -89,15 +89,15 @@ app.post('/api/sessions',
 // nuova partita
 app.post('/api/games', isLoggedIn, async (req, res) => {
   try {
-    const { startId, destId } = await assignStartDest();
-    const gameId = await createGame(req.user.id, startId, destId);
+    const { startId, destId } = await assignStartDest(); // assegna start e dest
+    const gameId = await createGame(req.user.id, startId, destId); // crea la partita
     const nameOf = new Map((await getStations()).map(s => [s.id, s.name])); // id -> name per le etichette
     res.json({
       gameId,
       start: { id: startId, name: nameOf.get(startId) },
       dest: { id: destId, name: nameOf.get(destId) },
       coins: 20,
-    });
+    }); // valori ritornati
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
@@ -126,6 +126,7 @@ app.post('/api/games/:gameId/route', isLoggedIn,
         return res.json({ valid: false, steps: [], finalScore: 0 });
       }
 
+      // percorso valido
       const { steps, finalScore } = await runExecution(route);
       await finishGame(game.id, finalScore);
       const nameOf = new Map((await getStations()).map(s => [s.id, s.name]));

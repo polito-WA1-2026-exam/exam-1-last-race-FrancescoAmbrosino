@@ -9,11 +9,11 @@ const Q_USER_BY_ID   = `SELECT id, username, name
   FROM users
   WHERE id = ?`;
 
-export const getUser = async (username, password) => {
+export const getUser = async (username, password) => { // per controllo credenziali al login
   const user = await db.get(Q_USER_BY_NAME, [username]);
   if (!user) return false;
-  const hash = crypto.scryptSync(password, user.salt, 32).toString('hex');
-  const valid = crypto.timingSafeEqual(
+  const hash = crypto.scryptSync(password, user.salt, 32).toString('hex'); // sincrona
+  const valid = crypto.timingSafeEqual( // impedisce timing attack
     Buffer.from(user.hashedPassword, 'hex'),
     Buffer.from(hash, 'hex')
   );
@@ -21,6 +21,6 @@ export const getUser = async (username, password) => {
   return { id: user.id, username: user.username, name: user.name };
 };
 
-export const getUserById = async (id) => {
+export const getUserById = async (id) => { // per la deserializzazione di Passport
   return db.get(Q_USER_BY_ID, [id]); // undefined se non esiste
 };

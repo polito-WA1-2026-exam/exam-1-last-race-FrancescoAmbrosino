@@ -93,12 +93,12 @@ const hashPassword = (password) => {
   return { salt, hashedPassword };
 };
 
-await db.run('BEGIN TRANSACTION');
+await db.run('BEGIN TRANSACTION'); // per atomicità
 try {
   // stations
   const stationId = new Map();
   for (const stations of Object.values(network)) {
-    for (const name of stations) {
+    for (const name of stations) { // uso name così aggiungo ogni stazione una sola volta
       if (!stationId.has(name)) {
         const res = await db.run('INSERT INTO stations (name) VALUES (?)', [name]);
         stationId.set(name, res.lastID);
@@ -110,7 +110,7 @@ try {
   for (const [lineName, stations] of Object.entries(network)) {
     const res = await db.run('INSERT INTO lines (name) VALUES (?)', [lineName]);
     const lineId = res.lastID;
-    for (let position = 0; position < stations.length; position++) {
+    for (let position = 0; position < stations.length; position++) { // rispetto l'ordine dato da position
       await db.run(
         'INSERT INTO line_stations (lineId, stationId, position) VALUES (?, ?, ?)',
         [lineId, stationId.get(stations[position]), position]
@@ -165,6 +165,6 @@ const summary = await db.get(`SELECT
   (SELECT COUNT(*) FROM events)   AS eventi,
   (SELECT COUNT(*) FROM users)    AS utenti,
   (SELECT COUNT(DISTINCT userId) FROM games WHERE score IS NOT NULL) AS utentiConPartite`);
-console.log('Seed completato. Minimi:', summary);
+console.log('Seed completato:', summary);
 
 await db.close();

@@ -1,7 +1,7 @@
 import { getAdjacency, getInterchangeIds, getLinesPerSegment } from './dao-network.js';
 import { getRandomEvent } from './dao-games.js';
 
-// BFS su grafo non orientato
+// BFS su grafo non orientato (algoritmo standard)
 const bfsDistances = (adj, start) => {
   const dist = new Map([[start, 0]]);
   const queue = [start];
@@ -18,23 +18,24 @@ const bfsDistances = (adj, start) => {
 export const assignStartDest = async () => {
   const adj = await getAdjacency();
   const ids = [...adj.keys()];
-  for (let tries = 0; tries < 50; tries++) {
+  for (let tries = 0; tries < 50; tries++) { // scelgo 50 come numero di tentativi
     const start = ids[Math.floor(Math.random() * ids.length)];
     const dist = bfsDistances(adj, start);
     const far = [...dist].filter(([, d]) => d >= 3).map(([id]) => id);
-    if (far.length) return { startId: start, destId: far[Math.floor(Math.random() * far.length)] };
+    if (far.length) return { startId: start, destId: far[Math.floor(Math.random() * far.length)] }; // scelgo una destinazione casuale
+                                          // tra le destinazioni a distanza >= 3 dalla partenza (start), anch'essa scelta casualmente
   }
   throw new Error('Network too small for distance >= 3');
 };
 
-const segKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`;
+const segKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`; // segmento non orientato
 
-// ricostruisce la sequenza di stazioni dai segmenti scelti in ordine
-export const buildRoute = (segments, startId) => {
+// ricostruisce la sequenza di stazioni dai segmenti non orientati scelti in ordine
+export const buildRoute = (segments, startId) => { // non valida ancora
   const route = [startId];
   let cur = startId;
   for (const seg of segments) {
-    const [a, b] = seg;
+    const [a, b] = seg; // segmento non orientato -> devo controllare sia a che b
     if (a !== cur && b !== cur) return null; // catena rotta
     cur = a === cur ? b : a;
     route.push(cur);
@@ -44,8 +45,8 @@ export const buildRoute = (segments, startId) => {
 
 // validazione del percorso
 export const isRouteValid = async (route, startId, destId) => {
-  if (!Array.isArray(route) || route.length < 2) return false;
-  if (route[0] !== startId || route[route.length - 1] !== destId) return false;
+  if (!Array.isArray(route) || route.length < 2) return false; // percorso incompleto
+  if (route[0] !== startId || route[route.length - 1] !== destId) return false; // start o dest errati
   const adj = await getAdjacency();
   const interchanges = await getInterchangeIds();
   const linesOf = await getLinesPerSegment();
@@ -64,11 +65,11 @@ export const isRouteValid = async (route, startId, destId) => {
     if (sameLine.length > 0) {
       prevLines = new Set(sameLine); // resto sulla stessa linea: nessun cambio
     } else {
-      if (!interchanges.has(a)) return false; // cambio linea fuori da un interscambio
-      prevLines = new Set(segLines);
+      if (!interchanges.has(a)) return false; // cambio linea fuori da un interscambio (impossibile con dati consistenti)
+      prevLines = new Set(segLines); // cambio linea corretto
     }
   }
-  return true;
+  return true; // tutti i controlli sono passati -> route valida
 };
 
 // applica gli effetti

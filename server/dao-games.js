@@ -19,7 +19,7 @@ const Q_RANKING = `SELECT u.username, u.name, MAX(g.score) AS bestScore
   GROUP BY g.userId
   ORDER BY bestScore DESC, u.username ASC`;
 
-export const createGame = async (userId, startId, destId) => {
+export const createGame = async (userId, startId, destId) => { // inserisce nuova partita con score NULL
   const res = await db.run(Q_CREATE_GAME, [userId, startId, destId]);
   return res.lastID;
 };
@@ -32,10 +32,10 @@ export const finishGame = async (gameId, score) => {
   await db.run(Q_FINISH_GAME, [score, gameId]);
 };
 
-export const getRanking = async () => {
+export const getRanking = async () => { // miglior punteggio per utente
   return db.all(Q_RANKING);
 };
 
-export const getRandomEvent = async () => {
+export const getRandomEvent = async () => { // casuale grazie a " ORDER BY RANDOM() "
   return db.get(Q_RANDOM_EVENT);
 };
