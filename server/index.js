@@ -1,4 +1,3 @@
-// imports
 import express from "express";
 import morgan from 'morgan';
 import cors from 'cors';
@@ -104,7 +103,7 @@ app.post('/api/games', isLoggedIn, async (req, res) => {
   }
 });
 
-// invio percorso (lista di segmenti scelti, in ordine)
+// invio percorso
 app.post('/api/games/:gameId/route', isLoggedIn,
   [param('gameId').isInt(), body('segments').isArray(), body('segments.*').isArray(), body('segments.*.*').isInt()],
   async (req, res) => {
@@ -119,7 +118,7 @@ app.post('/api/games/:gameId/route', isLoggedIn,
       if (!game || game.userId !== req.user.id) return res.status(404).json({ error: 'Game not found' });
       if (game.score !== null) return res.status(409).json({ error: 'Game already finished' });
 
-      // ricostruisco il percorso dai segmenti scelti e lo valido (in ordine) lato server
+      // ricostruisco il percorso dai segmenti scelti e lo valido
       const route = buildRoute(segments, game.startStationId);
       const valid = route !== null && await isRouteValid(route, game.startStationId, game.destStationId);
       if (!valid) {

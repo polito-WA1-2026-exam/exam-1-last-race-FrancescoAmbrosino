@@ -1,6 +1,6 @@
 import db from './db.js';
 
-// Query
+// query
 const Q_CREATE_GAME  = `INSERT INTO games (userId, startStationId, destStationId)
   VALUES (?, ?, ?)`;
 const Q_GAME_BY_ID   = `SELECT *

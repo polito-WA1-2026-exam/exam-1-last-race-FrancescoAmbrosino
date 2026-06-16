@@ -1,7 +1,7 @@
 import db from './db.js';
 import crypto from 'crypto';
 
-// Query
+// query
 const Q_USER_BY_NAME = `SELECT *
   FROM users
   WHERE username = ?`;

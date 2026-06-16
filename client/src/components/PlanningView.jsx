@@ -2,16 +2,15 @@ import { useMemo, useRef, useState } from 'react';
 import { Button, ListGroup, Row, Col } from 'react-bootstrap';
 import CountdownTimer from './CountdownTimer.jsx';
 
-// chiave non orientata di un segmento (A-B == B-A)
+// segmento non orientato (A-B == B-A)
 const segKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`;
 
-// il giocatore costruisce il percorso scegliendo i segmenti dalla lista completa, in sequenza.
-// la validazione vera (in ordine) è lato server: qui solo selezione e un hint NON autoritativo.
+// il giocatore costruisce il percorso scegliendo i segmenti dalla lista completa
 function PlanningView({ game, segments, onSubmit }) {
-  const [chosen, setChosen] = useState([]); // segmenti scelti in ordine: [{ aId, aName, bId, bName }]
+  const [chosen, setChosen] = useState([]);
   const submittedRef = useRef(false);        // evita doppio invio (timer + bottone)
 
-  // ogni segmento usabile una sola volta: chiavi già scelte
+  // ogni segmento usabile una sola volta
   const usedKeys = useMemo(() => new Set(chosen.map((s) => segKey(s.aId, s.bId))), [chosen]);
 
   const addSeg = (s) => setChosen((c) => [...c, s]);
@@ -26,12 +25,10 @@ function PlanningView({ game, segments, onSubmit }) {
 
   return (
     <Row>
-      {/* sinistra: mappa + segmenti scelti */}
       <Col md={6}>
         <img src="/planning-map.png" alt="Network map: stations only, without lines"
           style={{ maxWidth: '100%', border: '1px solid #ccc' }} className="mb-3" />
 
-        {/* segmenti scelti, in ordine */}
         <p className="mb-1"><b>Your chosen segments</b></p>
         <ListGroup className="mb-2">
           {chosen.map((s, i) => (
@@ -41,7 +38,6 @@ function PlanningView({ game, segments, onSubmit }) {
         </ListGroup>
       </Col>
 
-      {/* destra: titolo, timer, start/dest, lista completa, bottoni */}
       <Col md={6}>
         <h2>Planning 🧭</h2>
         <CountdownTimer seconds={90} onExpire={doSubmit} />
