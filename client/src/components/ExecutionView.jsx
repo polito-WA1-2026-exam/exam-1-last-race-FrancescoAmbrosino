@@ -7,7 +7,7 @@ function ExecutionView({ steps, onDone }) {
 
   useEffect(() => {
     if (visible >= steps.length) return;
-    const id = setInterval(() => setVisible((v) => Math.min(v + 1, steps.length)), 1200);
+    const id = setInterval(() => setVisible((v) => Math.min(v + 1, steps.length)), 1200); // ogni 1200ms
     return () => clearInterval(id);
   }, [visible, steps.length]);
 

@@ -4,13 +4,13 @@
 ## React Client Application Routes
 
 - Route `/`: home page
-  - Anonymous user: shows only the game instructions (no map)
-  - Logged-in user: instructions plus the "New game" and "Ranking" buttons
+  - Anonymous user: only the game instructions
+  - Logged-in user: the game instructions plus the "New game" and "Ranking" buttons
 - Route `/login`: login page
-  - Shows `LoginForm`; redirects to `/` if the user is already logged in
-- Route `/play`: the game, as a state machine (Setup, Planning, Execution, Result)
+  - Redirects to `/` if the user is already logged in
+- Route `/play`: game page, as a state machine (Setup, Planning, Execution, Result)
   - Requires login (redirects to `/login` if not authenticated)
-- Route `/ranking`: the general ranking page
+- Route `/ranking`: ranking page
   - Requires login (redirects to `/login` if not authenticated)
 - Route `*`: catch-all for unknown URLs, shows a "Page not found" message
 
@@ -20,7 +20,7 @@
 
 - `POST /api/sessions`
   - Body: `{ username, password }`
-  - Response: the logged-in user `{ id, username, name }`, or 401 on invalid credentials
+  - Response: the logged-in user `{ id, username, name }`, or 401 (Unauthorized) on invalid credentials
 - `GET /api/sessions/current`
   - Response: the logged-in user `{ id, username, name }`, or `null` (200) if not authenticated
 - `DELETE /api/sessions/current` (requires login)
@@ -38,7 +38,7 @@
   - Reconstructs the path from the chosen segments and validates it server-side, in order (valid start/dest, adjacent segments, line changes only at interchanges, each segment used at most once), then runs the execution (one random event per segment)
   - Response (valid): `{ valid: true, steps: [{ from: {id,name}, to: {id,name}, event: {id,description,effect}, coins }], finalScore }`
   - Response (invalid/incomplete): `{ valid: false, steps: [], finalScore: 0 }`
-  - 404 if the game is not the user's / does not exist, 409 if already finished
+  - 404 (Not Found) if the game is not the user's / does not exist, 409 (Conflict) if already finished
 
 ### Ranking
 
@@ -48,7 +48,7 @@
 ## Data Models
 
 - `dao-users.js`
-  - `getUser(username, password)`: verifies credentials (scrypt + `timingSafeEqual`), returns the public user object or false
+  - `getUser(username, password)`: verifies credentials (scrypt + timingSafeEqual), returns the public user object or false
   - `getUserById(id)`: re-hydrates the user from the session
 
 - `dao-network.js`

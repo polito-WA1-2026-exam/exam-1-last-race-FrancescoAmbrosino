@@ -135,7 +135,7 @@ try {
   }
 
   // partite già giocate
-  const sid = (name) => stationId.get(name);
+  const sId = (name) => stationId.get(name);
   const seededGames = [
     { user: 'alice', start: 'Arco Trionfale', dest: 'Molo Antico', score: 23 },
     { user: 'alice', start: 'Crocevia del Falco', dest: 'Borgo Sereno', score: 18 },
@@ -145,7 +145,7 @@ try {
   for (const g of seededGames) {
     await db.run(
       'INSERT INTO games (userId, startStationId, destStationId, score) VALUES (?, ?, ?, ?)',
-      [userId.get(g.user), sid(g.start), sid(g.dest), g.score]
+      [userId.get(g.user), sId(g.start), sId(g.dest), g.score]
     );
   }
 

@@ -58,7 +58,7 @@ app.get('/api/segments', isLoggedIn, async (req, res) => {
   try {
     res.json(await getSegments());
   } catch (err) {
-    res.status(500).json({ error: err.message });
+    res.status(500).json({ error: err.message }); // 500 Internal Server Error (errore imprevisto)
   }
 });
 
@@ -78,7 +78,7 @@ app.post('/api/sessions',
   [body('username').notEmpty(), body('password').notEmpty()],
   (req, res, next) => {
     const errors = validationResult(req);
-    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() }); // valida login
+    if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() }); // 400 Bad Request (username o password vuoti)
     passport.authenticate('local', (err, user, info) => {
       if (err) return next(err);
       if (!user) return res.status(401).json({ error: info?.message || 'Invalid credentials' }); // valida credenziali
@@ -109,7 +109,7 @@ app.post('/api/games/:gameId/route', isLoggedIn,
   async (req, res) => {
     try {
       const errors = validationResult(req);
-      if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() });
+      if (!errors.isEmpty()) return res.status(400).json({ errors: errors.array() }); // gameId/segments non validi
 
       const segments = req.body.segments.map(s => s.map(Number));
       if (segments.some(s => s.length !== 2)) return res.status(400).json({ error: 'Each segment must be a pair of station ids' });
