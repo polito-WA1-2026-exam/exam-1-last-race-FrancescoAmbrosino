@@ -18,15 +18,17 @@ function App() {
     API.getCurrentUser()
       .then((u) => setUser(u))
       .catch(() => setUser(null))
-      .finally(() => setLoading(false)); // l'utente c'è
+      .finally(() => setLoading(false));
   }, []);
 
+  // aggiorno user e navigo a '/'
   const handleLogin = async (credentials) => {
     const u = await API.login(credentials);
     setUser(u);
     navigate('/');
   };
 
+  // aggiorno user e navigo a '/'
   const handleLogout = async () => {
     await API.logout();
     setUser(null);
@@ -51,7 +53,7 @@ function App() {
   );
 }
 
-// home: l'anonimo vede solo le istruzioni mentre il loggato vede anche i pulsanti (no mappa in entrambi i casi)
+// home: l'anonimo vede solo le istruzioni mentre il loggato vede anche i pulsanti
 function Home({ user }) {
   return (
     <>

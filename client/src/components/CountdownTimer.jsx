@@ -1,12 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 
-// countdown di `seconds` secondi; chiama onExpire UNA volta allo scadere.
+// countdown di `seconds` secondi, chiamo onExpire una volta allo scadere
 function CountdownTimer({ seconds, onExpire }) {
   const [remaining, setRemaining] = useState(seconds);
   const onExpireRef = useRef(onExpire);
   const firedRef = useRef(false);
 
-  // tengo il ref aggiornato all'ultima onExpire in un effetto (NON durante la render)
+  // tengo il ref aggiornato all'ultima onExpire in un effetto
   useEffect(() => { onExpireRef.current = onExpire; }, [onExpire]);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ function CountdownTimer({ seconds, onExpire }) {
         clearInterval(id);
         onExpireRef.current(); // auto-submit allo scadere
       }
-    }, 250);
+    }, 250); // ogni 250ms
     return () => clearInterval(id); // cleanup
   }, [seconds]);
 

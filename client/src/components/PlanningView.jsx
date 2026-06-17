@@ -8,9 +8,9 @@ const segKey = (a, b) => `${Math.min(a, b)}-${Math.max(a, b)}`;
 // il giocatore costruisce il percorso scegliendo i segmenti dalla lista completa
 function PlanningView({ game, segments, onSubmit }) {
   const [chosen, setChosen] = useState([]);
-  const submittedRef = useRef(false);        // evita doppio invio (timer + bottone)
+  const submittedRef = useRef(false); // evita doppio invio (timer + bottone)
 
-  // ogni segmento usabile una sola volta
+  // insieme dei segmenti usati, ricalcolato quando cambia chosen
   const usedKeys = useMemo(() => new Set(chosen.map((s) => segKey(s.aId, s.bId))), [chosen]);
 
   const addSeg = (s) => setChosen((c) => [...c, s]);
@@ -18,7 +18,7 @@ function PlanningView({ game, segments, onSubmit }) {
   const clear = () => setChosen([]);
 
   const doSubmit = () => {
-    if (submittedRef.current) return; // una sola volta
+    if (submittedRef.current) return;
     submittedRef.current = true;
     onSubmit(chosen.map((s) => [s.aId, s.bId])); // invio i segmenti scelti in ordine
   };

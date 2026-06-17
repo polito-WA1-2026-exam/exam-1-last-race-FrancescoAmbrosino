@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 import { ListGroup, Button } from 'react-bootstrap';
 
-// rivela gli step uno alla volta (un evento per segmento), aggiornando il totale coin
+// rivelo gli step uno alla volta (un evento per segmento), aggiornando il totale coin
 function ExecutionView({ steps, onDone }) {
-  const [visible, setVisible] = useState(0);
+  const [visible, setVisible] = useState(0); // numero di step mostrati
 
   useEffect(() => {
     if (visible >= steps.length) return;
@@ -12,7 +12,7 @@ function ExecutionView({ steps, onDone }) {
   }, [visible, steps.length]);
 
   const shown = steps.slice(0, visible);
-  const done = visible >= steps.length;
+  const done = visible >= steps.length; // quando tutti visibili mostra 'See result'
 
   return (
     <div>

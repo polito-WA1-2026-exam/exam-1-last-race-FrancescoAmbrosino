@@ -5,12 +5,12 @@ import * as API from '../API.js';
 import PlanningView from './PlanningView.jsx';
 import ExecutionView from './ExecutionView.jsx';
 
-// Setup, Planning, Execution e Result vivono come STATO dentro questa pagina
+// setup, planning, execution e result vivono come stato dentro questa pagina
 function GamePage() {
   const [phase, setPhase] = useState('loading'); // loading | setup | planning | execution | result | error
-  const [game, setGame] = useState(null);        // { gameId, start, dest, coins }
+  const [game, setGame] = useState(null); // { gameId, start, dest, coins }
   const [segments, setSegments] = useState([]);
-  const [result, setResult] = useState(null);    // { valid, steps, finalScore }
+  const [result, setResult] = useState(null); // { valid, steps, finalScore }
   const [error, setError] = useState('');
   const initRef = useRef(false);
 
@@ -31,7 +31,7 @@ function GamePage() {
     }
   }, []);
 
-  useEffect(() => {
+  useEffect(() => { // impedisce di creare la partita due volte
     if (initRef.current) return;
     initRef.current = true;
     startGame();
@@ -42,8 +42,7 @@ function GamePage() {
     try {
       const res = await API.submitRoute(game.gameId, segments);
       setResult(res);
-      // valido -> Execution; invalido/incompleto -> dritto al risultato (score 0)
-      setPhase(res.valid && res.steps.length > 0 ? 'execution' : 'result');
+      setPhase(res.valid && res.steps.length > 0 ? 'execution' : 'result'); // valido -> execution; invalido/incompleto -> result (score 0)
     } catch (err) {
       setError(err.error || 'Error submitting route');
       setPhase('error');
@@ -73,7 +72,7 @@ function GamePage() {
     return <ExecutionView steps={result.steps} onDone={() => setPhase('result')} />;
   }
 
-  // result
+  // phase === 'result'
   return (
     <div>
       <h2>Result 🏁</h2>
