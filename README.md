@@ -89,11 +89,7 @@
 - `LoginForm`
   - Username/password form, shows the error on invalid credentials
 
-## Screenshot
-
-Ranking page:
-
-![Ranking page](./img/ranking.png)
+## Screenshots
 
 During a game:
 
@@ -102,6 +98,10 @@ During a game:
 During an execution:
 
 ![During an execution](./img/execution.png)
+
+Ranking page:
+
+![Ranking page](./img/ranking.png)
 
 ## Users Credentials
 
