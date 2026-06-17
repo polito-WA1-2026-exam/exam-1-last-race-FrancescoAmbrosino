@@ -1,122 +1,71 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { useEffect, useState } from 'react';
+import { Routes, Route, Navigate, useNavigate, Link } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import NavHeader from './components/NavHeader.jsx';
+import Instructions from './components/Instructions.jsx';
+import LoginForm from './components/LoginForm.jsx';
+import RankingTable from './components/RankingTable.jsx';
+import GamePage from './components/GamePage.jsx';
+import * as API from './API.js';
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
+
+  // all'avvio controllo se c'è già una sessione valida
+  useEffect(() => {
+    API.getCurrentUser()
+      .then((u) => setUser(u))
+      .catch(() => setUser(null))
+      .finally(() => setLoading(false));
+  }, []);
+
+  // aggiorno user e navigo a '/'
+  const handleLogin = async (credentials) => {
+    const u = await API.login(credentials);
+    setUser(u);
+    navigate('/');
+  };
+
+  // aggiorno user e navigo a '/'
+  const handleLogout = async () => {
+    await API.logout();
+    setUser(null);
+    navigate('/');
+  };
+
+  if (loading) return null; // evito il flicker finché non so se c'è l'utente
 
   return (
     <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
-
-      <div className="ticks"></div>
-
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
-
-      <div className="ticks"></div>
-      <section id="spacer"></section>
+      <NavHeader user={user} onLogout={handleLogout} />
+      <Container className="my-4">
+        <Routes>
+          <Route path="/" element={<Home user={user} />} />
+          <Route path="/login" element={user ? <Navigate to="/" /> : <LoginForm onLogin={handleLogin} />} />
+          <Route path="/play" element={user ? <GamePage /> : <Navigate to="/login" />} />
+          <Route path="/ranking" element={user ? <RankingTable /> : <Navigate to="/login" />} />
+          <Route path="*" element={<p>Page not found. 🤷</p>} />
+        </Routes>
+      </Container>
     </>
-  )
+  );
 }
 
-export default App
+// home: l'anonimo vede solo le istruzioni mentre il loggato vede anche i pulsanti
+function Home({ user }) {
+  return (
+    <>
+      <Instructions />
+      {user && (
+        <div className="d-flex gap-2 mt-3">
+          <Link to="/play" className="btn btn-primary">New game 🚇</Link>
+          <Link to="/ranking" className="btn btn-outline-secondary">Ranking 🏆</Link>
+        </div>
+      )}
+    </>
+  );
+}
+
+export default App;
