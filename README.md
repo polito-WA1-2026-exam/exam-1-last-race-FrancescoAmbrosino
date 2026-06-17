@@ -22,7 +22,7 @@
   - Body: `{ username, password }`
   - Response: the logged-in user `{ id, username, name }`, or 401 on invalid credentials
 - `GET /api/sessions/current`
-  - Response: the logged-in user `{ id, username, name }`, or 401 if not authenticated
+  - Response: the logged-in user `{ id, username, name }`, or `null` (200) if not authenticated
 - `DELETE /api/sessions/current` (requires login)
   - Response: empty (logout)
 

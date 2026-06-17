@@ -50,7 +50,7 @@ const isLoggedIn = (req, res, next) =>
 // sessione corrente
 app.get('/api/sessions/current', (req, res) => {
   if (req.isAuthenticated()) return res.json(req.user);
-  return res.status(401).json({ error: 'Not authenticated' });
+  return res.json(null); // anonimo = 200 con null
 });
 
 // lista dei segmenti
