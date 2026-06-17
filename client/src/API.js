@@ -11,10 +11,10 @@ async function handleResponse(res) {
   throw err;
 }
 
+// " credentials: 'include' " serve per propagare il cookie di sessione
 export const getCurrentUser = () =>
   fetch(`${SERVER_URL}/sessions/current`, { credentials: 'include' }).then(handleResponse);
 
-// " credentials: 'include' " serve per propagare il cookie di sessione
 export const login = (credentials) =>
   fetch(`${SERVER_URL}/sessions`, {
     method: 'POST',

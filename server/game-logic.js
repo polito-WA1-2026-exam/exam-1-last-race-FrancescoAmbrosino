@@ -11,10 +11,10 @@ const bfsDistances = (adj, start) => {
       if (!dist.has(v)) { dist.set(v, dist.get(u) + 1); queue.push(v); }
     }
   }
-  return dist; // stationId = distanza dal start
+  return dist; // stationId -> distanza da start
 };
 
-// start casuale e dest casuale a distanza >= 3 stop
+// start casuale e dest casuale a distanza >= 3 segmenti
 export const assignStartDest = async () => {
   const adj = await getAdjacency();
   const ids = [...adj.keys()];
